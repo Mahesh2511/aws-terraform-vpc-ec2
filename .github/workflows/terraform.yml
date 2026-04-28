@@ -32,11 +32,11 @@ jobs:
       - name: Terraform Apply
         id: apply_step
         working-directory: ./terraform
-        run: terraform apply -auto-approve
+        run: terraform apply -destroy -auto-approve
         continue-on-error: true
 
-      # 👇 Destroy only if Apply fails
-      - name: Terraform Destroy (on failure)
-        if: failure() && steps.apply_step.outcome == 'failure'
-        working-directory: ./terraform
-        run: terraform destroy -auto-approve
+      # # 👇 Destroy only if Apply fails
+      # - name: Terraform Destroy (on failure)
+      #   if: failure() && steps.apply_step.outcome == 'failure'
+      #   working-directory: ./terraform
+      #   run: terraform destroy -auto-approve
