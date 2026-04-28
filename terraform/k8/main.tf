@@ -38,10 +38,10 @@ module "eks" {
   cluster_endpoint_public_access = true
   enable_cluster_creator_admin_permissions = true
 
-  create_kms_key = false
-
-  # 👇 ADD THIS (fixes your error)
-  cluster_encryption_config = null
+  # ✅ Enable encryption (fix)
+  cluster_encryption_config = {
+    resources = ["secrets"]
+  }
 
   eks_managed_node_groups = {
     default = {
