@@ -18,7 +18,7 @@ module "vpc" {
   single_nat_gateway = true
 
   tags = {
-    "kubernetes.io/cluster/demo-eks-webapp-v4" = "shared"
+    "kubernetes.io/cluster/demo-eks-webapp-v25" = "shared"
   }
 }
 
