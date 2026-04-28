@@ -29,36 +29,29 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.0.0"
 
-  cluster_name    = "demo-eks-webapp-v4"
-  cluster_version = "1.33"   # ✅ latest stable
+  cluster_name    = "demo-eks-webapp-v25"
+  cluster_version = "1.33"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  # 🔥 Important settings
   cluster_endpoint_public_access = true
   enable_cluster_creator_admin_permissions = true
-  enable_kms_key = false
 
-  ########################
-  # Node Group
-  ########################
+  # ✅ correct way
+  create_kms_key = false
+
   eks_managed_node_groups = {
     default = {
       desired_size = 2
       min_size     = 1
       max_size     = 3
 
-      # ✅ Avoid capacity issues
       instance_types = ["t3.small", "t3.medium"]
-
-      # ✅ Modern AMI (IMPORTANT)
-      ami_type = "AL2023_x86_64_STANDARD"
-
+      ami_type       = "AL2023_x86_64_STANDARD"
       capacity_type = "ON_DEMAND"
     }
   }
-
   tags = {
     Environment = "dev"
   }
