@@ -1,0 +1,42 @@
+name: EKS k8 Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Terraform Init
+        working-directory: ./terraform/k8
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./terraform/k8
+        run: terraform plan
+
+      - name: Terraform Apply
+        id: apply_step
+        working-directory: ./terraform/k8
+        run: terraform apply -destroy -auto-approve
+        continue-on-error: true
+
+       # 👇 Destroy only if Apply fails
+      - name: Terraform Destroy (on failure)
+        if: failure() && steps.apply_step.outcome == 'failure'
+        working-directory: ./terraform/k8
+        run: terraform destroy -auto-approve
